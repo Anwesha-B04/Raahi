@@ -18,6 +18,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import busIcon from "@/assets/bus-icon.png";
 import { useState } from "react";
+import Map from "@/components/Map";
 
 const CommuterDashboard = () => {
   const navigate = useNavigate();
@@ -121,25 +122,7 @@ const CommuterDashboard = () => {
             <div className="grid lg:grid-cols-3 gap-6">
               {/* Map Section */}
               <div className="lg:col-span-2">
-                <Card className="shadow-card border-0">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <MapPin className="w-5 h-5 text-primary" />
-                      Live Bus Tracking
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-96 bg-muted rounded-lg flex items-center justify-center">
-                      <div className="text-center">
-                        <MapPin className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                        <p className="text-muted-foreground mb-4">
-                          Interactive map will be integrated here
-                        </p>
-                        <Badge variant="secondary">Mapbox Integration Required</Badge>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                <Map />
               </div>
 
               {/* Nearby Buses */}
