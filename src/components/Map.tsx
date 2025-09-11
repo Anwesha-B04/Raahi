@@ -55,7 +55,7 @@ const Map: React.FC<MapProps> = ({ buses = [] }) => {
         <div className="relative">
           <div className="h-96 rounded-lg overflow-hidden shadow-lg">
             <MapContainer
-              center={[31.1471, 75.3412]} // Chandigarh coordinates
+              center={[31.1471, 75.3412]}
               zoom={10}
               style={{ height: '100%', width: '100%' }}
               className="z-0"
@@ -64,7 +64,6 @@ const Map: React.FC<MapProps> = ({ buses = [] }) => {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
-              
               {busesToShow.map((bus) => (
                 <Marker
                   key={bus.id}
