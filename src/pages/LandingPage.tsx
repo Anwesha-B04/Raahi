@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Clock, Search, Shield, Users, BarChart3 } from "lucide-react";
+import { InfiniteSlider } from "@/components/core/infinite-slider";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/context/LanguageContext";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -47,7 +48,7 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50 animate-fade-in">
+  <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50 animate-slide-in-down">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3 animate-slide-in-left">
             <img src={busIcon} alt="Raahi Logo" className="w-10 h-10" />
@@ -69,43 +70,41 @@ const LandingPage = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="relative py-20 overflow-hidden">
+  <section className="relative py-20 overflow-hidden animate-zoom-in">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-10"
           style={{ backgroundImage: `url(${heroBg})` }}
         />
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-5xl md:text-6xl font-bold mb-6 leading-tight animate-fade-in">
+            <h2 className="text-5xl md:text-6xl font-bold mb-6 leading-tight animate-fade-in-up">
               {t('landing.title').split('Small Cities').map((part, index) => (
                 index === 0 ? (
                   <span key={index}>{part}</span>
                 ) : (
-                  <span key={index}>
-                    <span className="bg-gradient-hero bg-clip-text text-transparent">
-                      Small Cities
-                    </span>
+                  <span key={index} className="inline-block animate-shimmer bg-gradient-hero bg-clip-text text-transparent" style={{backgroundSize:'200% 100%',backgroundImage:'var(--gradient-hero)'}}>
+                    Small Cities
                     {part}
                   </span>
                 )
               ))}
             </h2>
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto animate-fade-in animate-stagger-1">
+            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto animate-fade-in-up" style={{animationDelay:'0.2s'}}>
               {t('landing.subtitle')}
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in animate-stagger-2">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up" style={{animationDelay:'0.4s'}}>
               <Button 
                 size="lg" 
                 variant="hero"
                 onClick={() => navigate('/login')}
-                className="text-lg px-8 py-6 transition-all duration-300 hover:scale-105"
+                className="text-lg px-8 py-6 transition-all duration-300 hover:scale-110 hover:shadow-primary"
               >
                 {t('landing.getStarted')}
               </Button>
               <Button 
                 size="lg" 
                 variant="outline"
-                className="text-lg px-8 py-6 border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 hover:scale-105"
+                className="text-lg px-8 py-6 border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 hover:scale-110 hover:shadow-primary"
               >
                 {t('landing.learnMore')}
               </Button>
@@ -125,28 +124,30 @@ const LandingPage = () => {
               {t('landing.featuresSubtitle')}
             </p>
           </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <Card 
-                key={index} 
-                className={`shadow-card hover:shadow-primary transition-all duration-300 border-0 group hover:scale-105 animate-scale-in animate-stagger-${(index % 6) + 1}`}
-              >
-                <CardContent className="p-6 text-center">
-                  <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center mx-auto mb-4 group-hover:animate-bounce-in">
+
+          {/* Features Slider Section */}
+          <div className="mb-16">
+            <InfiniteSlider speedOnHover={8} gap={32}>
+              {features.map((feature, index) => (
+                <div
+                  key={index}
+                  className="flex flex-col items-center justify-center min-w-[260px] max-w-xs mx-4 p-6 bg-card rounded-xl shadow-card border-0 group hover:scale-110 hover:shadow-primary transition-all duration-300 animate-zoom-in"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center mb-4 group-hover:animate-bounce-in animate-float">
                     <feature.icon className="w-8 h-8 text-primary-foreground" />
                   </div>
-                  <h4 className="text-xl font-semibold mb-3">{feature.title}</h4>
-                  <p className="text-muted-foreground">{feature.description}</p>
-                </CardContent>
-              </Card>
-            ))}
+                  <h4 className="text-xl font-semibold mb-3 text-center animate-fade-in-up" style={{animationDelay:'0.2s'}}>{feature.title}</h4>
+                  <p className="text-muted-foreground text-center animate-fade-in-up" style={{animationDelay:'0.3s'}}>{feature.description}</p>
+                </div>
+              ))}
+            </InfiniteSlider>
           </div>
         </div>
       </section>
 
       {/* Mission Section */}
-      <section className="py-20">
+  <section className="py-20 animate-fade-in-up">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -208,7 +209,7 @@ const LandingPage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-hero animate-fade-in">
+  <section className="py-20 bg-gradient-hero animate-zoom-in">
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-2xl mx-auto animate-scale-in">
             <h3 className="text-3xl font-bold text-primary-foreground mb-6">
@@ -230,7 +231,7 @@ const LandingPage = () => {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 border-t bg-card/50 animate-fade-in">
+  <footer className="py-12 border-t bg-card/50 animate-fade-in-up">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="flex items-center gap-3 mb-4 md:mb-0 animate-slide-in-left">
