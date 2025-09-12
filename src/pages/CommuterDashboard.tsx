@@ -17,43 +17,46 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import busIcon from "@/assets/bus-icon.png";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Map from "@/components/Map";
 
 const CommuterDashboard = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+  const [routeFrom, setRouteFrom] = useState("");
+  const [routeTo, setRouteTo] = useState("");
 
-  // Mock data for buses
-  const nearbyBuses = [
-    {
-      id: "PB-01-123",
-      route: "Chandigarh - Ludhiana",
-      currentStop: "Sector 17",
-      nextStop: "Sector 22",
-      eta: "5 min",
-      occupancy: "Moderate",
-      status: "On Time"
-    },
-    {
-      id: "PB-02-456",
-      route: "Amritsar - Jalandhar", 
-      currentStop: "Bus Stand",
-      nextStop: "Civil Lines",
-      eta: "12 min",
-      occupancy: "High",
-      status: "Delayed"
-    },
-    {
-      id: "PB-03-789",
-      route: "Patiala - Mohali",
-      currentStop: "Railway Station",
-      nextStop: "IT Park",
-      eta: "8 min",
-      occupancy: "Low",
-      status: "On Time"
-    }
-  ];
+  // Live bus data state
+  const [buses, setBuses] = useState<any[]>([]);
+
+  // Fetch live bus data from backend
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    const fetchBuses = async () => {
+      try {
+        const res = await fetch("http://localhost:4000/api/buses");
+        const data = await res.json();
+        setBuses(data.map((bus: any) => {
+          return {
+            ...bus,
+            // Add mock fields for UI compatibility
+            route: bus.route || bus.name || "Route Unknown",
+            currentStop: bus.currentStop || "-",
+            nextStop: bus.nextStop || "-",
+            eta: bus.eta || "-",
+            occupancy: bus.occupancy || "Moderate",
+            status: bus.status || (bus.eta && parseInt(bus.eta) > 10 ? "Delayed" : "On Time")
+          };
+        }));
+      } catch (e) {
+        // fallback to empty
+        setBuses([]);
+      }
+    };
+    fetchBuses();
+    interval = setInterval(fetchBuses, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   const savedRoutes = [
     {
@@ -73,6 +76,26 @@ const CommuterDashboard = () => {
       duration: "30 min"
     }
   ];
+
+  // Filter buses for Search tab
+  const filteredBuses = buses.filter((bus) => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      bus.id?.toLowerCase().includes(q) ||
+      bus.name?.toLowerCase().includes(q) ||
+      bus.route?.toLowerCase().includes(q) ||
+      bus.currentStop?.toLowerCase().includes(q) ||
+      bus.nextStop?.toLowerCase().includes(q)
+    );
+  });
+
+  // Filter saved routes for Routes tab
+  const filteredRoutes = savedRoutes.filter((route) => {
+    const fromMatch = !routeFrom.trim() || route.from.toLowerCase().includes(routeFrom.toLowerCase());
+    const toMatch = !routeTo.trim() || route.to.toLowerCase().includes(routeTo.toLowerCase());
+    return fromMatch && toMatch;
+  });
 
   return (
     <div className="min-h-screen bg-background">
@@ -122,7 +145,7 @@ const CommuterDashboard = () => {
             <div className="grid lg:grid-cols-3 gap-6">
               {/* Map Section */}
               <div className="lg:col-span-2">
-                <Map />
+                <Map buses={buses} />
               </div>
 
               {/* Nearby Buses */}
@@ -135,10 +158,10 @@ const CommuterDashboard = () => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    {nearbyBuses.map((bus) => (
+                    {buses.map((bus) => (
                       <div key={bus.id} className="p-4 border rounded-lg hover:bg-accent/50 transition-colors">
                         <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-semibold text-sm">{bus.id}</h4>
+                          <h4 className="font-semibold text-sm">{bus.id} <span className="text-xs text-muted-foreground">({bus.name})</span></h4>
                           <Badge 
                             variant={bus.status === "On Time" ? "default" : "destructive"}
                             className="text-xs"
@@ -154,6 +177,9 @@ const CommuterDashboard = () => {
                           <Badge variant="outline" className="text-xs">
                             {bus.occupancy}
                           </Badge>
+                        </div>
+                        <div className="text-xs mt-1 text-muted-foreground">
+                          <span>Current Location: {bus.currentLocation || `${bus.lat?.toFixed(3)}, ${bus.lng?.toFixed(3)}`}</span>
                         </div>
                       </div>
                     ))}
@@ -180,14 +206,10 @@ const CommuterDashboard = () => {
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="flex-1"
                   />
-                  <Button variant="default">
-                    <Search className="w-4 h-4 mr-2" />
-                    Search
-                  </Button>
                 </div>
                 
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {nearbyBuses.map((bus) => (
+                  {filteredBuses.map((bus) => (
                     <Card key={bus.id} className="p-4 hover:shadow-primary transition-all duration-300">
                       <div className="flex items-center justify-between mb-3">
                         <h4 className="font-semibold">{bus.id}</h4>
@@ -229,11 +251,19 @@ const CommuterDashboard = () => {
                   <div className="space-y-3">
                     <div>
                       <label className="text-sm font-medium">From</label>
-                      <Input placeholder="Enter starting location" />
+                      <Input 
+                        placeholder="Enter starting location"
+                        value={routeFrom}
+                        onChange={e => setRouteFrom(e.target.value)}
+                      />
                     </div>
                     <div>
                       <label className="text-sm font-medium">To</label>
-                      <Input placeholder="Enter destination" />
+                      <Input 
+                        placeholder="Enter destination"
+                        value={routeTo}
+                        onChange={e => setRouteTo(e.target.value)}
+                      />
                     </div>
                     <Button variant="hero" className="w-full">
                       <Route className="w-4 h-4 mr-2" />
@@ -252,7 +282,7 @@ const CommuterDashboard = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {savedRoutes.map((route) => (
+                  {filteredRoutes.map((route) => (
                     <div key={route.id} className="p-4 border rounded-lg hover:bg-accent/50 transition-colors">
                       <div className="flex items-center justify-between mb-2">
                         <h4 className="font-semibold text-sm">{route.name}</h4>
@@ -291,7 +321,7 @@ const CommuterDashboard = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {nearbyBuses.map((bus) => (
+                  {buses.map((bus) => (
                     <div key={bus.id} className="p-4 border rounded-lg">
                       <div className="flex items-center justify-between mb-3">
                         <h4 className="font-semibold">{bus.id} - {bus.route}</h4>

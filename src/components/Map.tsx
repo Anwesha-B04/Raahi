@@ -6,24 +6,23 @@ import { Badge } from "@/components/ui/badge";
 interface MapProps {
   buses?: Array<{
     id: string;
+    name?: string;
     lat: number;
     lng: number;
-    route: string;
-    status: string;
+    route?: string;
+    status?: string;
+    currentStop?: string;
+    nextStop?: string;
+    eta?: string;
+    occupancy?: string;
+    currentLocation?: string;
   }>;
 }
 
 const Map: React.FC<MapProps> = ({ buses = [] }) => {
   // Sample bus locations for Punjab
-  const sampleBuses = [
-    { id: "PB-01-123", lat: 31.1471, lng: 75.3412, route: "Chandigarh - Ludhiana", status: "On Time" },
-    { id: "PB-02-456", lat: 31.6340, lng: 74.8723, route: "Amritsar - Jalandhar", status: "Delayed" },
-    { id: "PB-03-789", lat: 30.7333, lng: 76.7794, route: "Patiala - Mohali", status: "On Time" },
-    { id: "PB-04-012", lat: 31.4260, lng: 75.2550, route: "Ludhiana - Bathinda", status: "On Time" },
-    { id: "PB-05-345", lat: 30.9010, lng: 75.8573, route: "Mohali - Zirakpur", status: "Delayed" },
-  ];
-
-  const busesToShow = buses.length > 0 ? buses : sampleBuses;
+  // If no buses provided, show nothing (or could show sampleBuses as fallback)
+  const busesToShow = buses && buses.length > 0 ? buses : [];
 
   // Convert lat/lng to relative positions on the map (simplified)
   const getPosition = (lat: number, lng: number) => {
@@ -81,16 +80,14 @@ const Map: React.FC<MapProps> = ({ buses = [] }) => {
                   } text-white shadow-lg transition-transform hover:scale-110`}>
                     <Bus className="w-4 h-4" />
                   </div>
-                  
                   {/* Tooltip */}
                   <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity bg-background border rounded-lg p-2 shadow-lg min-w-48 z-10">
-                    <div className="text-sm font-semibold">{bus.id}</div>
+                    <div className="text-sm font-semibold">{bus.id} <span className="text-xs text-muted-foreground">{bus.name}</span></div>
                     <div className="text-xs text-muted-foreground">{bus.route}</div>
                     <div className="text-xs mt-1">
-                      Status: <span className={`font-medium ${bus.status === 'On Time' ? 'text-green-600' : 'text-red-600'}`}>
-                        {bus.status}
-                      </span>
+                      Status: <span className={`font-medium ${bus.status === 'On Time' ? 'text-green-600' : 'text-red-600'}`}>{bus.status}</span>
                     </div>
+                    <div className="text-xs mt-1">Current: {bus.currentLocation || `${bus.lat?.toFixed(3)}, ${bus.lng?.toFixed(3)}`}</div>
                   </div>
                 </div>
               );
