@@ -2,63 +2,69 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Clock, Search, Shield, Users, BarChart3 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "@/context/LanguageContext";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import busIcon from "@/assets/bus-icon.png";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const features = [
     {
       icon: MapPin,
-      title: "Real-Time Tracking",
-      description: "Track buses live with GPS precision for accurate arrival times"
+      title: t('feature.realTimeTracking'),
+      description: t('feature.realTimeTrackingDesc')
     },
     {
       icon: Clock,
-      title: "Smart Schedules",
-      description: "View comprehensive timetables and plan your journey efficiently"
+      title: t('feature.smartSchedules'),
+      description: t('feature.smartSchedulesDesc')
     },
     {
       icon: Search,
-      title: "Route Planning",
-      description: "Find the best routes between any two points in the city"
+      title: t('feature.routePlanning'),
+      description: t('feature.routePlanningDesc')
     },
     {
       icon: Shield,
-      title: "Reliable Service",
-      description: "Built for small cities with optimized low-bandwidth performance"
+      title: t('feature.reliableService'),
+      description: t('feature.reliableServiceDesc')
     },
     {
       icon: Users,
-      title: "Multi-User Platform",
-      description: "Designed for commuters, transport authorities, and municipal corporations"
+      title: t('feature.multiUser'),
+      description: t('feature.multiUserDesc')
     },
     {
       icon: BarChart3,
-      title: "Fleet Analytics",
-      description: "Comprehensive monitoring and reporting for transport authorities"
+      title: t('feature.fleetAnalytics'),
+      description: t('feature.fleetAnalyticsDesc')
     }
   ];
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50 animate-fade-in">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 animate-slide-in-left">
             <img src={busIcon} alt="Raahi Logo" className="w-10 h-10" />
             <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
               Raahi
             </h1>
           </div>
-          <Button 
-            variant="outline" 
-            onClick={() => navigate('/login')}
-            className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-          >
-            Login
-          </Button>
+          <div className="flex items-center gap-4 animate-slide-in-right">
+            <LanguageSwitcher />
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/login')}
+              className="border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 hover:scale-105"
+            >
+              {t('header.login')}
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -70,31 +76,38 @@ const LandingPage = () => {
         />
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-              Smart Public Transport for{" "}
-              <span className="bg-gradient-hero bg-clip-text text-transparent">
-                Small Cities
-              </span>
+            <h2 className="text-5xl md:text-6xl font-bold mb-6 leading-tight animate-fade-in">
+              {t('landing.title').split('Small Cities').map((part, index) => (
+                index === 0 ? (
+                  <span key={index}>{part}</span>
+                ) : (
+                  <span key={index}>
+                    <span className="bg-gradient-hero bg-clip-text text-transparent">
+                      Small Cities
+                    </span>
+                    {part}
+                  </span>
+                )
+              ))}
             </h2>
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Real-time bus tracking, route planning, and efficient public transport 
-              management designed specifically for Punjab's growing cities.
+            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto animate-fade-in animate-stagger-1">
+              {t('landing.subtitle')}
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in animate-stagger-2">
               <Button 
                 size="lg" 
                 variant="hero"
                 onClick={() => navigate('/login')}
-                className="text-lg px-8 py-6"
+                className="text-lg px-8 py-6 transition-all duration-300 hover:scale-105"
               >
-                Get Started Today
+                {t('landing.getStarted')}
               </Button>
               <Button 
                 size="lg" 
                 variant="outline"
-                className="text-lg px-8 py-6 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                className="text-lg px-8 py-6 border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 hover:scale-105"
               >
-                Learn More
+                {t('landing.learnMore')}
               </Button>
             </div>
           </div>
@@ -104,21 +117,23 @@ const LandingPage = () => {
       {/* Features Grid */}
       <section className="py-20 bg-secondary/30">
         <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto text-center mb-16">
+          <div className="max-w-2xl mx-auto text-center mb-16 animate-fade-in">
             <h3 className="text-3xl font-bold mb-4">
-              Everything You Need for Smart Transit
+              {t('landing.featuresTitle')}
             </h3>
             <p className="text-muted-foreground text-lg">
-              Comprehensive features designed to transform public transportation 
-              in small cities across Punjab.
+              {t('landing.featuresSubtitle')}
             </p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
-              <Card key={index} className="shadow-card hover:shadow-primary transition-all duration-300 border-0">
+              <Card 
+                key={index} 
+                className={`shadow-card hover:shadow-primary transition-all duration-300 border-0 group hover:scale-105 animate-scale-in animate-stagger-${(index % 6) + 1}`}
+              >
                 <CardContent className="p-6 text-center">
-                  <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center mx-auto mb-4 group-hover:animate-bounce-in">
                     <feature.icon className="w-8 h-8 text-primary-foreground" />
                   </div>
                   <h4 className="text-xl font-semibold mb-3">{feature.title}</h4>
@@ -135,56 +150,54 @@ const LandingPage = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div>
+              <div className="animate-slide-in-left">
                 <h3 className="text-3xl font-bold mb-6">
-                  Our Mission: Connecting Punjab's Cities
+                  {t('mission.title')}
                 </h3>
                 <p className="text-muted-foreground text-lg mb-6">
-                  Raahi bridges the digital gap in public transportation for small cities 
-                  and tier-2 towns across Punjab. We provide real-time tracking solutions 
-                  that work efficiently even in low-bandwidth environments.
+                  {t('mission.description')}
                 </p>
                 <div className="space-y-4">
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-start gap-3 animate-fade-in animate-stagger-1">
                     <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center mt-1">
                       <div className="w-2 h-2 bg-primary-foreground rounded-full" />
                     </div>
                     <div>
-                      <h4 className="font-semibold">Reduce Wait Times</h4>
-                      <p className="text-muted-foreground">Accurate arrival predictions help commuters plan better</p>
+                      <h4 className="font-semibold">{t('mission.reduceWaitTimes')}</h4>
+                      <p className="text-muted-foreground">{t('mission.reduceWaitTimesDesc')}</p>
                     </div>
                   </div>
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-start gap-3 animate-fade-in animate-stagger-2">
                     <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center mt-1">
                       <div className="w-2 h-2 bg-primary-foreground rounded-full" />
                     </div>
                     <div>
-                      <h4 className="font-semibold">Optimize Routes</h4>
-                      <p className="text-muted-foreground">Smart algorithms find the best paths for every journey</p>
+                      <h4 className="font-semibold">{t('mission.optimizeRoutes')}</h4>
+                      <p className="text-muted-foreground">{t('mission.optimizeRoutesDesc')}</p>
                     </div>
                   </div>
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-start gap-3 animate-fade-in animate-stagger-3">
                     <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center mt-1">
                       <div className="w-2 h-2 bg-primary-foreground rounded-full" />
                     </div>
                     <div>
-                      <h4 className="font-semibold">Empower Authorities</h4>
-                      <p className="text-muted-foreground">Comprehensive analytics for better fleet management</p>
+                      <h4 className="font-semibold">{t('mission.empowerAuthorities')}</h4>
+                      <p className="text-muted-foreground">{t('mission.empowerAuthoritiesDesc')}</p>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="relative">
+              <div className="relative animate-slide-in-right">
                 <div className="w-80 h-80 bg-gradient-hero rounded-full opacity-20 absolute -top-10 -right-10 animate-float" />
-                <Card className="shadow-card relative z-10">
+                <Card className="shadow-card relative z-10 animate-scale-in">
                   <CardContent className="p-8">
                     <div className="text-center">
-                      <div className="text-4xl font-bold text-primary mb-2">1000+</div>
-                      <p className="text-muted-foreground mb-4">Buses Ready to Track</p>
-                      <div className="text-4xl font-bold text-accent mb-2">50+</div>
-                      <p className="text-muted-foreground mb-4">Cities Across Punjab</p>
-                      <div className="text-4xl font-bold text-primary mb-2">24/7</div>
-                      <p className="text-muted-foreground">Real-Time Monitoring</p>
+                      <div className="text-4xl font-bold text-primary mb-2 animate-bounce-in">1000+</div>
+                      <p className="text-muted-foreground mb-4">{t('stats.busesReady')}</p>
+                      <div className="text-4xl font-bold text-accent mb-2 animate-bounce-in animate-stagger-1">50+</div>
+                      <p className="text-muted-foreground mb-4">{t('stats.cities')}</p>
+                      <div className="text-4xl font-bold text-primary mb-2 animate-bounce-in animate-stagger-2">24/7</div>
+                      <p className="text-muted-foreground">{t('stats.monitoring')}</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -195,39 +208,38 @@ const LandingPage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-hero">
+      <section className="py-20 bg-gradient-hero animate-fade-in">
         <div className="container mx-auto px-4 text-center">
-          <div className="max-w-2xl mx-auto">
+          <div className="max-w-2xl mx-auto animate-scale-in">
             <h3 className="text-3xl font-bold text-primary-foreground mb-6">
-              Ready to Transform Your Commute?
+              {t('cta.title')}
             </h3>
             <p className="text-primary-foreground/80 text-lg mb-8">
-              Join thousands of commuters and transport authorities already using Raahi 
-              to make public transport more efficient and reliable.
+              {t('cta.description')}
             </p>
             <Button 
               size="lg" 
               variant="secondary"
               onClick={() => navigate('/login')}
-              className="text-lg px-8 py-6"
+              className="text-lg px-8 py-6 transition-all duration-300 hover:scale-105"
             >
-              Start Your Journey
+              {t('cta.startJourney')}
             </Button>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 border-t bg-card/50">
+      <footer className="py-12 border-t bg-card/50 animate-fade-in">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between">
-            <div className="flex items-center gap-3 mb-4 md:mb-0">
+            <div className="flex items-center gap-3 mb-4 md:mb-0 animate-slide-in-left">
               <img src={busIcon} alt="Raahi Logo" className="w-8 h-8" />
               <span className="text-lg font-semibold">Raahi</span>
             </div>
-            <div className="text-muted-foreground text-center md:text-right">
-              <p>© 2024 Raahi. Connecting Punjab's Cities.</p>
-              <p className="text-sm mt-1">Built for small cities, designed for growth.</p>
+            <div className="text-muted-foreground text-center md:text-right animate-slide-in-right">
+              <p>{t('footer.copyright')}</p>
+              <p className="text-sm mt-1">{t('footer.tagline')}</p>
             </div>
           </div>
         </div>
